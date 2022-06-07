@@ -12,7 +12,7 @@ class Project(models.Model):
 
 class Well(models.Model):
     well_name = models.CharField(max_length=30, unique=True)
-    project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True, related_name="project")
 
     def __str__(self):
         return self.well_name
