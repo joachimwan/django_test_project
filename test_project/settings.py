@@ -159,5 +159,4 @@ MESSAGE_TAGS = {
 
 # Configure Django App for Heroku.
 import django_on_heroku
-import dj_database_url
 django_on_heroku.settings(locals())

@@ -1,0 +1,48 @@
+{% extends 'main/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Lookahead{% endblock %}
+
+{% block content %}
+<h1>This is Lookahead page.</h1>
+<p>Welcome, {{ user.username|default:"Guest" }}!</p>
+
+{% if projects %}
+    <h1>Projects:</h1>
+    {% for project in projects %}
+        <div class="container row">
+            <div class="list-group col-9">
+                <a href="#" class="list-group-item list-group-item-action">{{ project.name }}</a>
+            </div>
+            <!-- Delete button -->
+            <div class="col-auto">
+                {% if user == project.created_by %}
+                    <form method="post" action="{% url 'lookahead' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" name="delete_project" value="{{project.id}}">Delete</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% for item in sequence %}
+            {% if item.phase.well.project == project %}
+                <div class="container row">
+                    <div class="col-2"><a>{{ item.phase.well }}</a></div>
+                    <div class="col-4"><a>{{ item.phase.name }}</a></div>
+                    <div class="col">
+                        <div class="container">
+                            {% for step in steps %}
+                                {% if step.phase == item.phase %}
+                                    <div class="row"><a>{{ step.ops_step }}</a></div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+{% endif %}
+
+{% endblock %}

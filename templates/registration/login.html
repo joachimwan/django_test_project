@@ -8,14 +8,23 @@
 <h1>This is Login.</h1>
 
 {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Your username and password didn't match. Please try again.</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 {% endif %}
 
 {% if next %}
     {% if user.is_authenticated %}
-        <p>Your account doesn't have access to this page. To proceed, please login with an account that has access.</p>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Your account doesn't have access to this page. To proceed, please login with an account that has access.</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     {% else %}
-        <p>Please login to see this page.</p>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Please login to see this page.</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     {% endif %}
 {% endif %}
 

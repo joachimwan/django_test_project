@@ -5,21 +5,24 @@
 <nav class="navbar navbar-expand-md sticky-top navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">Home</a>
-        <!-- Collapsible list -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        <!-- Collapsible list -->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Link</a>
+                    {% url 'lookahead' as lookahead_url %}
+                    <a {% if request.path == lookahead_url %} class="nav-link active" aria-current="page" {% else %} class="nav-link" {% endif %} href="{% url 'lookahead' %}">Lookahead</a>
                 </li>
+                {% if user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
+                    <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
                 </li>
+                {% endif %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Apps
+                        Temp
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#">App1</a></li>
@@ -32,22 +35,24 @@
                     </ul>
                 </li>
             </ul>
+
+            <!-- Login and logout system -->
+            {% if not user.is_authenticated %}
+                <form method="post" action="{% url 'login' %}" class="d-flex ms-auto">
+                    {% csrf_token %}
+                    <input type="text" placeholder="Username" name="username" class="form-control me-2">
+                    <input type="password" placeholder="Password" name="password" class="form-control me-2">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <input type="hidden" name="next" value="{{ next }}">
+                </form>
+            {% else %}
+                <div class="ms-auto">
+                    <span class="navbar-brand h1">Welcome, {{ user.username }}!</span>
+                    <a href="{% url 'logout' %}" class="btn btn-secondary me-2">Logout</a>
+                    <a href="{% url 'password_change' %}" class="btn btn-secondary me-2">Change password</a>
+                </div>
+            {% endif %}
+
         </div>
-        <!-- Login and logout system -->
-        {% if not user.is_authenticated %}
-            <form method="post" action="{% url 'login' %}" class="d-flex ms-auto">
-                {% csrf_token %}
-                <input type="text" placeholder="Username" name="username" class="form-control me-2">
-                <input type="password" placeholder="Password" name="password" class="form-control me-2">
-                <button type="submit" class="btn btn-primary">Login</button>
-                <input type="hidden" name="next" value="{{ next }}">
-            </form>
-        {% else %}
-            <span class="navbar-brand mb-0 h1 ms-auto">Welcome, {{ user.username }}!</span>
-            <div class="ms-auto">
-                <a href="{% url 'logout' %}" class="btn btn-secondary me-2">Logout</a>
-                <a href="{% url 'password_change' %}" class="btn btn-secondary me-2">Change password</a>
-            </div>
-        {% endif %}
     </div>
 </nav>

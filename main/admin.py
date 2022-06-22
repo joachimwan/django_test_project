@@ -5,3 +5,7 @@ from .models import *
 
 admin.site.register(Project)
 admin.site.register(Well)
+admin.site.register(Phase)
+admin.site.register(Step)
+admin.site.register(Lookahead)
+admin.site.register(Sequence)

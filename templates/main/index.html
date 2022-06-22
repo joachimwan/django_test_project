@@ -8,27 +8,24 @@
 <h1>This is Main page.</h1>
 <p>Welcome, {{ user.username|default:"Guest" }}!</p>
 
-<!--<div>-->
-<!--    {% if not user.is_authenticated %}-->
-<!--        <p><a href="{% url 'login' %}">Login</a></p>-->
-<!--    {% else %}-->
-<!--        <p><a href="{% url 'logout' %}">Logout</a></p>-->
-<!--        <p><a href="{% url 'password_change' %}">Change password</a></p>-->
-<!--    {% endif %}-->
-<!--</div>-->
-
+{% if user.is_authenticated %}
 <form method="post" action="{% url 'index' %}">
-    {% csrf_token %}
-    {{ project_form|crispy }}
-    <button type="submit" class="btn btn-primary mt-2" name="create_project">Create new project</button>
-</form>
-
-<br>
-<h1>Projects:</h1>
-{% for project in projects %}
-    <div class="list-group">
-        <a href="#" class="list-group-item list-group-item-action">{{ project.project_name }}</a>
+    <div class="form-group">
+        {% csrf_token %}
+        {{ project_form|crispy }}
+        <button type="submit" class="btn btn-primary mt-2" name="create_project">Create new project</button>
     </div>
-{% endfor %}
+</form>
+<br>
+{% endif %}
+
+{% if projects %}
+    <h1>Projects:</h1>
+    {% for project in projects %}
+        <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action">{{ project.name }}</a>
+        </div>
+    {% endfor %}
+{% endif %}
 
 {% endblock %}

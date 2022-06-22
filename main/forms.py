@@ -8,10 +8,10 @@ from .models import *
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
-        fields = ['project_name', ]
+        fields = ['name', ]
 
 
 class WellForm(ModelForm):
     class Meta:
         model = Well
-        fields = ['well_name', 'project', ]
+        fields = ['name', 'project', ]
