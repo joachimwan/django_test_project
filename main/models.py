@@ -23,7 +23,7 @@ class Well(models.Model):
 class Phase(models.Model):
     name = models.CharField(max_length=30)
     well = models.ForeignKey(Well, on_delete=models.CASCADE, related_name="phases")
-    order = models.IntegerField(null=True)
+    order = models.IntegerField(null=True)  # order of phases within a well
 
     def __str__(self):
         return f'{self.well} - {self.order} - {self.name}'
@@ -35,7 +35,7 @@ class Phase(models.Model):
 class Step(models.Model):
     ops_step = models.CharField(max_length=100)
     phase = models.ForeignKey(Phase, on_delete=models.CASCADE, related_name="ops_steps")
-    order = models.IntegerField(null=True)
+    order = models.IntegerField(null=True)  # order of steps within a phase
 
     def __str__(self):
         return f'{self.phase} - {self.order} - {self.ops_step}'
@@ -55,7 +55,7 @@ class Lookahead(models.Model):
 class Sequence(models.Model):
     lookahead = models.ForeignKey(Lookahead, on_delete=models.CASCADE, null=True, blank=True, related_name="sequence")
     phase = models.ForeignKey(Phase, on_delete=models.CASCADE)
-    order = models.IntegerField(null=True)
+    order = models.IntegerField(null=True)  # order of phases within a lookahead
 
     def __str__(self):
         return f'{self.lookahead} - {self.order} - {self.phase}'

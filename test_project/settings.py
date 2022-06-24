@@ -22,12 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5@htnluy)#mzv#(nr%tj(f)x=!(vy1vc+ecx%giumttb58@kq^'
+# SECRET_KEY = 'django-insecure-5@htnluy)#mzv#(nr%tj(f)x=!(vy1vc+ecx%giumttb58@kq^'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.environ.get('DEBUG_VALUE') == 'True')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'joachimwan.herokuapp.com',
+]
 
 
 # Application definition
@@ -128,8 +132,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+# Used by static template variable accessed in templates
 STATIC_URL = 'static/'
 
+# Additional directories that Django's collectstatic tool should search for static files
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), os.path.join(BASE_DIR, 'react-app/build/static')]
 
 # Default primary key field type
