@@ -23,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-5@htnluy)#mzv#(nr%tj(f)x=!(vy1vc+ecx%giumttb58@kq^'
-# SECRET_KEY = os.environ['SECRET_KEY']  # raises error when running manage.py check --deploy
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = True
 DEBUG = (os.environ.get('DEBUG_VALUE') == 'True')
 
 # show all environment variables

@@ -5,22 +5,25 @@
 {% block title %}Lookahead{% endblock %}
 
 {% block content %}
-<h1>This is Lookahead page.</h1>
-<p>Welcome, {{ user.username|default:"Guest" }}!</p>
+<!--<h1>This is Lookahead page.</h1>-->
+<!--<p>Welcome, {{ user.username|default:"Guest" }}!</p>-->
 
 {% if projects %}
-    <h1>Projects:</h1>
+    <h3>Projects:</h3>
     {% for project in projects %}
+        <hr>
         <div class="container row">
             <div class="list-group col-9">
-                <a href="#" class="list-group-item list-group-item-action">{{ project.name }}</a>
+                <a href="#" class="list-group-item list-group-item-primary list-group-item-action">{{ project.name }}</a>
             </div>
-            <!-- Delete button -->
+            <!-- Delete project -->
             <div class="col-auto">
                 {% if user == project.created_by %}
-                    <form method="post" action="{% url 'lookahead' %}">
+                    <form method="post" action="{% url 'crud_project' %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger" name="delete_project" value="{{project.id}}">Delete</button>
+                        <input type="hidden" name="project_id" value="{{ project.id }}">
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button type="submit" class="btn btn-danger" name="delete_project"><i class="bi bi-trash"></i></button>
                     </form>
                 {% endif %}
             </div>

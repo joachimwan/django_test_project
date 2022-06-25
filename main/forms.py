@@ -14,4 +14,28 @@ class ProjectForm(ModelForm):
 class WellForm(ModelForm):
     class Meta:
         model = Well
+        fields = ['name', ]
+
+
+class PhaseForm(ModelForm):
+    class Meta:
+        model = Phase
+        fields = ['name', 'well', ]
+
+
+class StepForm(ModelForm):
+    class Meta:
+        model = Step
+        fields = ['ops_step', 'phase', ]
+
+
+class LookaheadForm(ModelForm):
+    class Meta:
+        model = Lookahead
         fields = ['name', 'project', ]
+
+
+class SequenceForm(ModelForm):
+    class Meta:
+        model = Sequence
+        fields = ['lookahead', 'phase', ]
