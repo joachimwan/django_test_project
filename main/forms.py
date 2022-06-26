@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, TextInput
 # from .models import Project, Well
 from .models import *
 
@@ -9,12 +9,24 @@ class ProjectForm(ModelForm):
     class Meta:
         model = Project
         fields = ['name', ]
+        widgets = {
+            'name': TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g. GK Phase 3'
+            }),
+        }
 
 
 class WellForm(ModelForm):
     class Meta:
         model = Well
         fields = ['name', ]
+        widgets = {
+            'name': TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g. Miri-1'
+            }),
+        }
 
 
 class PhaseForm(ModelForm):
