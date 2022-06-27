@@ -66,8 +66,9 @@
         {% for well in project.wells.all %}
         <div class="row align-items-center g-2 ms-3">
             <!-- Well name -->
+            <div class="col-auto"><strong>WELL -</strong></div>
             <div class="list-group col-3" id="well-{{ well.id }}">
-                <a href="#" class="list-group-item list-group-item-action" style="display: block"><strong>WELL - {{ well.name }}</strong></a>
+                <a href="#" class="list-group-item list-group-item-action" style="display: block"><strong>{{ well.name }}</strong></a>
             </div>
             <!-- Update project -->
             <div class="col-auto" id="update-well-{{ well.id }}" style="display: none">

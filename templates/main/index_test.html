@@ -1,0 +1,135 @@
+{% extends 'main/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block title %}Main{% endblock %}
+
+{% block script %}
+<script src="{% static 'main/js/index.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<!--<h1>This is Main page.</h1>-->
+<!--<p>Welcome, {{ user.username|default:"Guest" }}!</p>-->
+
+<h3>Wells Projects:</h3>
+
+<!-- Create project -->
+{% if user.is_authenticated %}
+    <form method="post" action="{% url 'crud_project' %}" class="row align-items-center g-2">
+        <div class="col-auto">
+            {% csrf_token %}
+            {{ project_form.name }}
+        </div>
+        <div class="col-auto">
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button type="submit" class="btn btn-primary" name="create_project">Create new project</button>
+        </div>
+    </form>
+{% endif %}
+
+{% for project in projects %}
+    <hr>
+    <div class="container-fluid">
+        <div class="row my-2 align-items-center">
+            <!-- Project name -->
+            <div class="col list-group" id="div-project-name-{{ project.id }}">
+                <a href="#" class="list-group-item list-group-item-primary list-group-item-action" style="background-color:rgba(207,226,255,0.5)">
+                    <strong>PROJECT - {{ project.name }}</strong>
+                </a>
+            </div>
+            {% if user.is_authenticated %}
+                {% if user == project.created_by %}
+                    <!-- Update project -->
+                    <div class="col list-group" id="form-update-project-{{ project.id }}" hidden="true">
+                        <form method="post" action="{% url 'crud_project' %}" class="row align-items-center">
+                            {% csrf_token %}
+                            <div class="col">
+                                <div class="list-group">
+                                    <input type="text" name="name" value="{{ project.name }}" class="form-control list-group-item">
+                                </div>
+                            </div>
+                            <input type="hidden" name="project_id" value="{{ project.id }}">
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <div class="col-auto list-group">
+                                <button type="submit" class="btn btn-success opacity-75" name="update_project"><i class="bi bi-check"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Toggle button to show/hide input field to update project name -->
+                    <div class="list-group col-auto" id="button-toggle-update-project-{{ project.id }}">
+                        <button type="button" class="btn btn-warning" onclick="updateProject({{ project.id }})"><i class="bi bi-pen"></i></button>
+                    </div>
+                    <!-- Delete project -->
+                    <form method="post" action="{% url 'crud_project' %}" class="list-group col-auto" id="button-delete-project-{{ project.id }}">
+                        {% csrf_token %}
+                        <input type="hidden" name="project_id" value="{{ project.id }}">
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button type="submit" class="btn btn-danger" name="delete_project"><i class="bi bi-trash"></i></button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        {% for well in project.wells.all %}
+            <div class="row my-2 align-items-center">
+                <!-- Well name -->
+                <div class="col-auto"><strong>WELL:</strong></div>
+                <div class="col list-group" id="div-well-name-{{ well.id }}">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <strong>{{ well.name }}</strong>
+                    </a>
+                </div>
+                {% if user.is_authenticated %}
+                    {% if user == well.created_by %}
+                        <!-- Update well -->
+                        <div class="col list-group" id="form-update-well-{{ well.id }}" hidden="true">
+                            <form method="post" action="{% url 'crud_well' %}" class="row align-items-center">
+                                {% csrf_token %}
+                                <div class="col">
+                                    <div class="list-group">
+                                        <input type="text" name="name" value="{{ well.name }}" class="form-control list-group-item">
+                                    </div>
+                                </div>
+                                <input type="hidden" name="well_id" value="{{ well.id }}">
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <div class="col-auto list-group">
+                                    <button type="submit" class="btn btn-success opacity-75" name="update_well"><i class="bi bi-check"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- Toggle button to show/hide input field to update well name -->
+                        <div class="list-group col-auto" id="button-toggle-update-well-{{ well.id }}">
+                            <button type="button" class="btn btn-warning" onclick="updateWell({{ well.id }})"><i class="bi bi-pen"></i></button>
+                        </div>
+                        <!-- Delete well -->
+                        <form method="post" action="{% url 'crud_well' %}" class="list-group col-auto" id="button-delete-well-{{ well.id }}">
+                            {% csrf_token %}
+                            <input type="hidden" name="well_id" value="{{ well.id }}">
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <button type="submit" class="btn btn-danger" name="delete_well"><i class="bi bi-trash"></i></button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endfor %}
+        <!-- Create well -->
+        {% if user == project.created_by %}
+            <form method="post" action="{% url 'crud_well' %}" class="row my-2 align-items-center">
+                <div class="col-4">
+                    {% csrf_token %}
+                    {{ well_form.name }}
+                </div>
+                <div class="col-auto ps-0">
+                    <input type="hidden" name="project_id" value="{{ project.id }}">
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm" name="create_well">Create new well</button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+{% endfor %}
+
+{% endblock %}

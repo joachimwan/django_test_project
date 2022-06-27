@@ -2,7 +2,7 @@
 
 {% load auth_extras %}
 
-<nav class="navbar navbar-expand-md sticky-top navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">Home</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -10,10 +10,18 @@
         </button>
         <!-- Collapsible list -->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     {% url 'lookahead' as lookahead_url %}
                     <a {% if request.path == lookahead_url %} class="nav-link active" aria-current="page" {% else %} class="nav-link" {% endif %} href="{% url 'lookahead' %}">Lookahead</a>
+                </li>
+                <li class="nav-item">
+                    {% url 'test' as test_url %}
+                    <a {% if request.path == test_url %} class="nav-link active" aria-current="page" {% else %} class="nav-link" {% endif %} href="{% url 'test' %}">Test</a>
+                </li>
+                <li class="nav-item">
+                    {% url 'index_test' as itest_url %}
+                    <a {% if request.path == itest_url %} class="nav-link active" aria-current="page" {% else %} class="nav-link" {% endif %} href="{% url 'index_test' %}">Index Test</a>
                 </li>
                 {% if user.is_superuser %}
                 <li class="nav-item">
@@ -35,7 +43,6 @@
                     </ul>
                 </li>
             </ul>
-
             <!-- Login and logout system -->
             {% if not user.is_authenticated %}
                 <form method="post" action="{% url 'login' %}" class="d-flex ms-auto">
@@ -46,13 +53,12 @@
                     <input type="hidden" name="next" value="{{ next }}">
                 </form>
             {% else %}
-                <div class="ms-auto">
-                    <span class="navbar-brand h1">Welcome, {{ user.username }}!</span>
-                    <a href="{% url 'logout' %}" class="btn btn-secondary me-2">Logout</a>
-                    <a href="{% url 'password_change' %}" class="btn btn-secondary me-2">Change password</a>
+                <div class="ms-auto row align-items-center">
+                    <div class="col-auto navbar-brand h1 mb-0 ps-0">Welcome, {{ user.username }}!</div>
+                    <a href="{% url 'logout' %}" class="col-auto btn btn-secondary me-2">Logout</a>
+                    <a href="{% url 'password_change' %}" class="col-auto btn btn-secondary me-2">Change password</a>
                 </div>
             {% endif %}
-
         </div>
     </div>
 </nav>

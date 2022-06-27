@@ -1,0 +1,53 @@
+{% extends 'main/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block title %}Test{% endblock %}
+
+{% block content %}
+
+<h3>Container tests:</h3>
+
+<div class="container">
+    <div class="row my-2">
+        <div class="list-group col"><div class="list-group-item list-group-item-action">item1.1</div></div>
+        <div class="list-group col"><div class="list-group-item list-group-item-action">item1.2</div></div>
+    </div>
+    <div class="row my-2">
+        <div class="list-group col"><div class="list-group-item list-group-item-action">item2.1</div></div>
+        <div class="list-group col"><div class="list-group-item list-group-item-action">item2.2</div></div>
+        <div class="list-group col"><input type="text" class="list-group-item form-control" placeholder="input type text"></div>
+        <div class="list-group col"><div class="list-group-item list-group-item-action">item2.3</div></div>
+    </div>
+    <div class="row my-2 align-items-center">
+        <div class="list-group col"><div class="list-group-item list-group-item-action">Element with style="display:none" >></div></div>
+        <div class="list-group col" style="display:none"><input type="text" class="list-group-item form-control" placeholder="input type text"></div>
+        <div class="list-group col"><input type="text" class="list-group-item form-control" placeholder="input type text"></div>
+        <div class="list-group col"><button type="button" class="btn btn-warning">Button</button></div>
+    </div>
+    <div class="row my-2 align-items-center">
+        <div class="list-group col"><div class="list-group-item list-group-item-action">item</div></div>
+        <div class="list-group col"><input type="text" class="list-group-item form-control" placeholder="input type text"></div>
+        <div class="list-group col-auto"><button type="button" class="btn btn-warning">Button col-auto</button></div>
+    </div>
+    <div class="row my-2">
+        <div class="list-group col"><div class="list-group-item list-group-item-action">item3.1</div></div>
+        <div class="list-group col"><div class="list-group-item list-group-item-action">item3.2</div></div>
+        <div class="list-group col"><div class="list-group-item list-group-item-action">item3.3</div></div>
+    </div>
+    <div class="row my-2">
+        <div class="list-group col"><div class="list-group-item list-group-item-action">item4.1</div></div>
+        <div class="list-group col"><div class="list-group-item list-group-item-action">item4.2</div></div>
+        <div class="list-group col-auto"><div class="list-group-item list-group-item-action">item4.3 col-auto</div></div>
+    </div>
+    <div class="row my-2">
+        <div class="list-group col-auto me-auto"><div class="list-group-item list-group-item-action">item5.1 me-auto</div></div>
+        <div class="list-group col-auto"><div class="list-group-item list-group-item-action">item5.2</div></div>
+    </div>
+</div>
+<hr>
+
+
+{% endblock %}

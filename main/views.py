@@ -26,6 +26,25 @@ def index(request):
     return render(request, 'main/index.html', context)
 
 
+def index_test(request):
+    # return HttpResponse("<h1>Hi Joachim, this is the main page.</h1>")
+    context = {}
+    messages.set_level(request, messages.DEBUG)
+    # messages.debug(request, 'This is DEBUG.')
+    # messages.info(request, 'This is INFO.')
+    # messages.success(request, 'This is SUCCESS.')
+    # messages.warning(request, 'This is WARNING.')
+    # messages.error(request, 'This is ERROR.')
+
+    context['project_form'] = ProjectForm()
+    context['well_form'] = WellForm()
+    context['projects'] = Project.objects.all()
+    context['steps'] = Step.objects.all()
+    context['sequence'] = Sequence.objects.all()
+
+    return render(request, 'main/index_test.html', context)
+
+
 @login_required
 def lookahead(request):
     context = {
@@ -35,6 +54,10 @@ def lookahead(request):
     }
 
     return render(request, 'main/lookahead.html', context)
+
+
+def test(request):
+    return render(request, 'main/test.html')
 
 
 @login_required
