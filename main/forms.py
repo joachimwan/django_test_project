@@ -44,7 +44,12 @@ class StepForm(ModelForm):
 class LookaheadForm(ModelForm):
     class Meta:
         model = Lookahead
-        fields = ['name', 'project', ]
+        fields = ['name', ]
+        widgets = {
+            'name': TextInput(attrs={
+                'class': 'form-control'
+            }),
+        }
 
 
 class SequenceForm(ModelForm):

@@ -20,7 +20,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('lookahead/', views.lookahead, name='lookahead'),
     path('test/', views.test, name='test'),
-    path('index_test/', views.index_test, name='index_test'),
     path('crud_project/', views.crud_project, name='crud_project'),
     path('crud_well/', views.crud_well, name='crud_well'),
+    path('crud_lookahead/', views.crud_lookahead, name='crud_lookahead'),
 ]

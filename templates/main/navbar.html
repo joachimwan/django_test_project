@@ -19,10 +19,6 @@
                     {% url 'test' as test_url %}
                     <a {% if request.path == test_url %} class="nav-link active" aria-current="page" {% else %} class="nav-link" {% endif %} href="{% url 'test' %}">Test</a>
                 </li>
-                <li class="nav-item">
-                    {% url 'index_test' as itest_url %}
-                    <a {% if request.path == itest_url %} class="nav-link active" aria-current="page" {% else %} class="nav-link" {% endif %} href="{% url 'index_test' %}">Index Test</a>
-                </li>
                 {% if user.is_superuser %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>

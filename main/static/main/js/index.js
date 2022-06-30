@@ -53,3 +53,31 @@ function updateWell(id) {
         }
     });
 }
+
+function updateLookahead(id) {
+    let hiddenable_element_ids = [
+        "div-lookahead-name-",
+        "form-update-lookahead-",
+        "undo-button-toggle-update-lookahead-",
+//        "button-delete-lookahead-"
+    ];
+    hiddenable_element_ids.forEach(function(element_name){
+        let element = document.getElementById(element_name+id);
+        let hidden_attr = element.getAttribute("hidden");
+        if (hidden_attr) {
+            element.removeAttribute("hidden");
+        } else {
+            element.setAttribute("hidden", true);
+        }
+    });
+
+    let other_buttons = document.querySelectorAll('[id^="button"]');
+    other_buttons.forEach(function(element){
+        let hidden_attr = element.getAttribute("hidden");
+        if (hidden_attr) {
+            element.removeAttribute("hidden");
+        } else {
+            element.setAttribute("hidden", true);
+        }
+    });
+}

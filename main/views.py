@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.forms import modelformset_factory
 from .forms import *
 
 # Create your views here.
@@ -19,45 +20,38 @@ def index(request):
 
     context['project_form'] = ProjectForm()
     context['well_form'] = WellForm()
+    context['lookahead_form'] = LookaheadForm()
     context['projects'] = Project.objects.all()
-    context['steps'] = Step.objects.all()
-    context['sequence'] = Sequence.objects.all()
 
     return render(request, 'main/index.html', context)
-
-
-def index_test(request):
-    # return HttpResponse("<h1>Hi Joachim, this is the main page.</h1>")
-    context = {}
-    messages.set_level(request, messages.DEBUG)
-    # messages.debug(request, 'This is DEBUG.')
-    # messages.info(request, 'This is INFO.')
-    # messages.success(request, 'This is SUCCESS.')
-    # messages.warning(request, 'This is WARNING.')
-    # messages.error(request, 'This is ERROR.')
-
-    context['project_form'] = ProjectForm()
-    context['well_form'] = WellForm()
-    context['projects'] = Project.objects.all()
-    context['steps'] = Step.objects.all()
-    context['sequence'] = Sequence.objects.all()
-
-    return render(request, 'main/index_test.html', context)
 
 
 @login_required
 def lookahead(request):
     context = {
         'projects': Project.objects.all(),
-        'steps': Step.objects.all(),
-        'sequence': Sequence.objects.all()
     }
-
-    return render(request, 'main/lookahead.html', context)
+    return render(request, 'main/lookahead_test.html', context)
 
 
 def test(request):
-    return render(request, 'main/test.html')
+    context = {}
+    ProjectFormSet = modelformset_factory(Project, ProjectForm, extra=3)
+    if request.method == 'POST':
+        formset = ProjectFormSet(request.POST, queryset=Project.objects.filter(created_by=request.user))
+        if formset.is_valid():
+            for form in formset:
+                if form.has_changed():
+                    instance = form.save(commit=False)
+                    instance.created_by = request.user
+                    instance.save()
+            return redirect(test)
+        else:
+            messages.warning(request, f'{ formset }')
+    else:
+        formset = ProjectFormSet(queryset=Project.objects.filter(created_by=request.user))
+    context['formset'] = formset
+    return render(request, 'main/test.html', context)
 
 
 @login_required
@@ -134,4 +128,44 @@ def crud_well(request):
                 messages.success(request, f'{well.name} well successfully updated.')
             else:
                 messages.error(request, f'Unable to update {well.name} well.')
+            return HttpResponseRedirect(n)
+
+
+@login_required
+def crud_lookahead(request):
+    if request.method == 'POST' and "create_lookahead" in request.POST:
+        lookahead_form = LookaheadForm(request.POST)
+        n = request.POST.get('next')
+        if lookahead_form.is_valid():
+            lookahead = lookahead_form.save(commit=False)
+            lookahead.created_by = request.user
+            project_id = request.POST.get("project_id")
+            project = Project.objects.get(pk=project_id)
+            lookahead.project = project
+            lookahead.save()
+            messages.success(request, f'{lookahead_form["name"].value()} lookahead successfully created.')
+        else:
+            messages.error(request, f'Unable to create {lookahead_form["name"].value()} lookahead.')
+        return HttpResponseRedirect(n)
+
+    if request.method == 'POST' and "delete_lookahead" in request.POST:
+        lookahead_id = request.POST.get("lookahead_id")
+        n = request.POST.get('next')
+        lookahead = Lookahead.objects.get(pk=lookahead_id)
+        if lookahead.created_by == request.user:
+            messages.success(request, f'{lookahead.name} lookahead successfully deleted.')
+            lookahead.delete()
+            return HttpResponseRedirect(n)
+
+    if request.method == 'POST' and "update_lookahead" in request.POST:
+        lookahead_id = request.POST.get("lookahead_id")
+        n = request.POST.get('next')
+        lookahead = Lookahead.objects.get(pk=lookahead_id)
+        if lookahead.created_by == request.user:
+            lookahead_form = LookaheadForm(request.POST, instance=lookahead)
+            if lookahead_form.is_valid():
+                lookahead = lookahead_form.save()
+                messages.success(request, f'{lookahead.name} lookahead successfully updated.')
+            else:
+                messages.error(request, f'Unable to update {lookahead.name} lookahead.')
             return HttpResponseRedirect(n)
