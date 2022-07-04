@@ -27,11 +27,21 @@ def index(request):
 
 
 @login_required
+def well(request):
+    context = {
+        'projects': Project.objects.all(),
+        'phase_form': PhaseForm(),
+        'step_form': StepForm()
+    }
+    return render(request, 'main/well.html', context)
+
+
+@login_required
 def lookahead(request):
     context = {
         'projects': Project.objects.all(),
     }
-    return render(request, 'main/lookahead_test.html', context)
+    return render(request, 'main/lookahead.html', context)
 
 
 def test(request):
@@ -128,6 +138,86 @@ def crud_well(request):
                 messages.success(request, f'{well.name} well successfully updated.')
             else:
                 messages.error(request, f'Unable to update {well.name} well.')
+            return HttpResponseRedirect(n)
+
+
+@login_required
+def crud_phase(request):
+    if request.method == 'POST' and "create_phase" in request.POST:
+        phase_form = PhaseForm(request.POST)
+        n = request.POST.get('next')
+        if phase_form.is_valid():
+            phase = phase_form.save(commit=False)
+            well_id = request.POST.get("well_id")
+            well = Well.objects.get(pk=well_id)
+            phase.well = well
+            phase.order = 0  # CHANGE THIS NEXT TIME!!!!!!!!!!!!!!!!!!!!!
+            phase.save()
+            messages.success(request, f'{phase_form["name"].value()} phase successfully created.')
+        else:
+            messages.error(request, f'Unable to create {phase_form["name"].value()} phase.')
+        return HttpResponseRedirect(n)
+
+    if request.method == 'POST' and "delete_phase" in request.POST:
+        phase_id = request.POST.get("phase_id")
+        n = request.POST.get('next')
+        phase = Phase.objects.get(pk=phase_id)
+        if phase.well.created_by == request.user:
+            messages.success(request, f'{phase.name} phase successfully deleted.')
+            phase.delete()
+            return HttpResponseRedirect(n)
+
+    if request.method == 'POST' and "update_phase" in request.POST:
+        phase_id = request.POST.get("phase_id")
+        n = request.POST.get('next')
+        phase = Phase.objects.get(pk=phase_id)
+        if phase.well.created_by == request.user:
+            phase_form = PhaseForm(request.POST, instance=phase)
+            if phase_form.is_valid():
+                phase = phase_form.save()
+                messages.success(request, f'{phase.name} phase successfully updated.')
+            else:
+                messages.error(request, f'Unable to update {phase.name} phase.')
+            return HttpResponseRedirect(n)
+
+
+@login_required
+def crud_step(request):
+    if request.method == 'POST' and "create_step" in request.POST:
+        step_form = StepForm(request.POST)
+        n = request.POST.get('next')
+        if step_form.is_valid():
+            step = step_form.save(commit=False)
+            phase_id = request.POST.get("phase_id")
+            phase = Phase.objects.get(pk=phase_id)
+            step.phase = phase
+            step.order = 0  # CHANGE THIS NEXT TIME!!!!!!!!!!!!!!!!!!!!!
+            step.save()
+            messages.success(request, f'{step_form["ops_step"].value()} step successfully created.')
+        else:
+            messages.error(request, f'Unable to create {step_form["ops_step"].value()} step.')
+        return HttpResponseRedirect(n)
+
+    if request.method == 'POST' and "delete_step" in request.POST:
+        step_id = request.POST.get("step_id")
+        n = request.POST.get('next')
+        step = Step.objects.get(pk=step_id)
+        if step.phase.well.created_by == request.user:
+            messages.success(request, f'{step.ops_step} step successfully deleted.')
+            step.delete()
+            return HttpResponseRedirect(n)
+
+    if request.method == 'POST' and "update_step" in request.POST:
+        step_id = request.POST.get("step_id")
+        n = request.POST.get('next')
+        step = Step.objects.get(pk=step_id)
+        if step.phase.well.created_by == request.user:
+            step_form = StepForm(request.POST, instance=step)
+            if step_form.is_valid():
+                step = step_form.save()
+                messages.success(request, f'{step.ops_step} step successfully updated.')
+            else:
+                messages.error(request, f'Unable to update {step.ops_step} step.')
             return HttpResponseRedirect(n)
 
 

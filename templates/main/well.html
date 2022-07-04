@@ -1,0 +1,201 @@
+{% extends 'main/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block title %}Well{% endblock %}
+
+{% block script %}
+<script src="{% static 'main/js/index.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<!-- Container per project -->
+{% for project in projects %}
+    <div class="container-fluid">
+        <div class="row my-2 align-items-center">
+            <!-- Project name -->
+            <div class="col list-group" id="div-project-name-{{ project.id }}">
+                <a href="#" class="list-group-item list-group-item-primary list-group-item-action opacity-75">
+                    <strong>PROJECT - {{ project.name }}</strong>
+                </a>
+            </div>
+        </div>
+
+        {% for well in project.wells.all %}
+            <div class="row my-2 align-items-center">
+                <!-- Well name -->
+                <div class="col list-group" id="div-well-name-{{ well.id }}">
+                    <a href="#" class="list-group-item list-group-item-info list-group-item-action opacity-75">
+                        <strong>{{ well.name }}</strong>
+                    </a>
+                </div>
+            </div>
+            <div class="sortable">
+                {% for phase in well.phases.all %}
+                    <div class="row">
+                        <!-- Left column -->
+                        <div class="col-lg-6">
+                            <div class="row my-2 align-items-center">
+                                <i class="col-auto bi bi-grip-vertical handle"></i>
+                                <div class="col list-group" id="div-phase-name-{{ phase.id }}">
+                                    <!-- Phase name -->
+                                    <a href="#" class="list-group-item list-group-item-success list-group-item-action opacity-75">
+                                        <strong>{{ phase.name }}</strong>
+                                    </a>
+                                </div>
+                                {% if user.is_authenticated %}
+                                    {% if user == well.created_by %}
+                                        <!-- Update phase -->
+                                        <div class="col list-group" id="form-update-phase-{{ phase.id }}" hidden="true">
+                                            <form method="post" action="{% url 'crud_phase' %}" class="row align-items-center">
+                                                {% csrf_token %}
+                                                <div class="col">
+                                                    <div class="list-group">
+                                                        <input type="text" name="name" value="{{ phase.name }}" class="form-control list-group-item">
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" name="phase_id" value="{{ phase.id }}">
+                                                <input type="hidden" name="next" value="{{ request.path }}">
+                                                <div class="col-auto list-group">
+                                                    <button type="submit" class="btn btn-success opacity-50 btn-sm" name="update_phase"><i class="bi bi-pen"></i></button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- Delete phase -->
+                                        <form method="post" action="{% url 'crud_phase' %}" class="list-group col-auto" id="delete-button-phase-{{ phase.id }}" hidden="true">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="phase_id" value="{{ phase.id }}">
+                                            <input type="hidden" name="next" value="{{ request.path }}">
+                                            <button type="submit" class="btn btn-danger btn-sm" name="delete_phase"><i class="bi bi-trash"></i></button>
+                                        </form>
+                                        <!-- Toggle button to show/hide input field to update phase name -->
+                                        <div class="list-group col-auto" id="button-toggle-update-phase-{{ phase.id }}">
+                                            <button type="button" class="btn btn-warning btn-sm" onclick="updatePhase({{ phase.id }})"><i class="bi bi-pen"></i></button>
+                                        </div>
+                                        <div class="list-group col-auto" id="undo-button-toggle-update-phase-{{ phase.id }}" hidden="true">
+                                            <button type="button" class="btn btn-warning btn-sm" onclick="updatePhase({{ phase.id }})"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Right column: Ops step -->
+                        <div class="col-lg-6">
+                            <div class="row sortable">
+                                {% for step in phase.ops_steps.all %}
+                                    <div class="row my-2 align-items-center">
+                                        <i class="col-auto bi bi-arrow-down-up handle"></i>
+                                        <div class="col list-group" id="div-step-name-{{ step.id }}">
+                                            <a href="#" class="list-group-item list-group-item-light list-group-item-action opacity-75">
+                                                <strong>{{ step.ops_step }}</strong>
+                                            </a>
+                                        </div>
+                                        {% if user.is_authenticated %}
+                                            {% if user == well.created_by %}
+                                                <!-- Update step -->
+                                                <div class="col list-group" id="form-update-step-{{ step.id }}" hidden="true">
+                                                    <form method="post" action="{% url 'crud_step' %}" class="row align-items-center">
+                                                        {% csrf_token %}
+                                                        <div class="col">
+                                                            <div class="list-group">
+                                                                <input type="text" name="ops_step" value="{{ step.ops_step }}" class="form-control list-group-item">
+                                                            </div>
+                                                        </div>
+                                                        <input type="hidden" name="step_id" value="{{ step.id }}">
+                                                        <input type="hidden" name="next" value="{{ request.path }}">
+                                                        <div class="col-auto list-group">
+                                                            <button type="submit" class="btn btn-success opacity-50 btn-sm" name="update_step"><i class="bi bi-pen"></i></button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <!-- Delete step -->
+                                                <form method="post" action="{% url 'crud_step' %}" class="list-group col-auto" id="delete-button-step-{{ step.id }}" hidden="true">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="step_id" value="{{ step.id }}">
+                                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                                    <button type="submit" class="btn btn-danger btn-sm" name="delete_step"><i class="bi bi-trash"></i></button>
+                                                </form>
+                                                <!-- Toggle button to show/hide input field to update step name -->
+                                                <div class="list-group col-auto" id="button-toggle-update-step-{{ step.id }}">
+                                                    <button type="button" class="btn btn-warning btn-sm" onclick="updateStep({{ step.id }})"><i class="bi bi-pen"></i></button>
+                                                </div>
+                                                <div class="list-group col-auto" id="undo-button-toggle-update-step-{{ step.id }}" hidden="true">
+                                                    <button type="button" class="btn btn-warning btn-sm" onclick="updateStep({{ step.id }})"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Create step -->
+                            {% if user == well.created_by %}
+                                <form method="post" action="{% url 'crud_step' %}" class="row my-2 align-items-center">
+                                    <div class="col-4">
+                                        {% csrf_token %}
+                                        {{ step_form.ops_step }}
+                                    </div>
+                                    <div class="col-auto ps-0">
+                                        <input type="hidden" name="phase_id" value="{{ phase.id }}">
+                                        <input type="hidden" name="next" value="{{ request.path }}">
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm" name="create_step">Add step</button>
+                                    </div>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Create phase -->
+            {% if user == well.created_by %}
+                <form method="post" action="{% url 'crud_phase' %}" class="row my-2 align-items-center">
+                    <div class="col-4">
+                        {% csrf_token %}
+                        {{ phase_form.name }}
+                    </div>
+                    <div class="col-auto ps-0">
+                        <input type="hidden" name="well_id" value="{{ well.id }}">
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm" name="create_phase">Add phase</button>
+                    </div>
+                </form>
+            {% endif %}
+
+        {% endfor %}
+    </div>
+    <hr>
+{% endfor %}
+
+<script>
+    let sortables = document.getElementsByClassName("sortable");
+    [...sortables].forEach(function(sortable, index){
+        new Sortable(sortable, {
+            multiDrag: true,
+            selectedClass: 'sortable-selected',
+            fallbackTolerance: 3,
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            handle: ".handle"
+        });
+    });
+</script>
+
+<style>
+    .sortable-selected {
+        background-color: #f9c7c8;
+        border: solid red 1px;
+        border-radius: 10px;
+    }
+
+    .handle {
+    	cursor: move;
+<!--    	cursor: -webkit-grabbing;-->
+    }
+</style>
+
+{% endblock %}

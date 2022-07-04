@@ -12,8 +12,6 @@
 
 {% block content %}
 
-<h3>Wells Projects:</h3>
-
 <!-- Create project -->
 {% if user.is_authenticated %}
     <form method="post" action="{% url 'crud_project' %}" class="row align-items-center g-2">
@@ -26,11 +24,11 @@
             <button type="submit" class="btn btn-primary" name="create_project">Create project</button>
         </div>
     </form>
+    <hr>
 {% endif %}
 
 <!-- Container per project -->
 {% for project in projects %}
-    <hr>
     <div class="container-fluid">
         <div class="row my-2 align-items-center">
             <!-- Project name -->
@@ -58,6 +56,13 @@
                             </div>
                         </form>
                     </div>
+                    <!-- Delete project -->
+                    <form method="post" action="{% url 'crud_project' %}" class="list-group col-auto" id="delete-button-project-{{ project.id }}" hidden="true">
+                        {% csrf_token %}
+                        <input type="hidden" name="project_id" value="{{ project.id }}">
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button type="submit" class="btn btn-danger btn-sm" name="delete_project"><i class="bi bi-trash"></i></button>
+                    </form>
                     <!-- Toggle button to show/hide input field to update project name -->
                     <div class="list-group col-auto" id="button-toggle-update-project-{{ project.id }}">
                         <button type="button" class="btn btn-warning btn-sm" onclick="updateProject({{ project.id }})"><i class="bi bi-pen"></i></button>
@@ -65,13 +70,6 @@
                     <div class="list-group col-auto" id="undo-button-toggle-update-project-{{ project.id }}" hidden="true">
                         <button type="button" class="btn btn-warning btn-sm" onclick="updateProject({{ project.id }})"><i class="bi bi-arrow-counterclockwise"></i></button>
                     </div>
-                    <!-- Delete project -->
-                    <form method="post" action="{% url 'crud_project' %}" class="list-group col-auto" id="button-delete-project-{{ project.id }}">
-                        {% csrf_token %}
-                        <input type="hidden" name="project_id" value="{{ project.id }}">
-                        <input type="hidden" name="next" value="{{ request.path }}">
-                        <button type="submit" class="btn btn-danger btn-sm" name="delete_project"><i class="bi bi-trash"></i></button>
-                    </form>
                 {% endif %}
             {% endif %}
         </div>
@@ -106,6 +104,13 @@
                                         </div>
                                     </form>
                                 </div>
+                                <!-- Delete well -->
+                                <form method="post" action="{% url 'crud_well' %}" class="list-group col-auto" id="delete-button-well-{{ well.id }}" hidden="true">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="well_id" value="{{ well.id }}">
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button type="submit" class="btn btn-danger btn-sm" name="delete_well"><i class="bi bi-trash"></i></button>
+                                </form>
                                 <!-- Toggle button to show/hide input field to update well name -->
                                 <div class="list-group col-auto" id="button-toggle-update-well-{{ well.id }}">
                                     <button type="button" class="btn btn-warning btn-sm" onclick="updateWell({{ well.id }})"><i class="bi bi-pen"></i></button>
@@ -113,13 +118,6 @@
                                 <div class="list-group col-auto" id="undo-button-toggle-update-well-{{ well.id }}" hidden="true">
                                     <button type="button" class="btn btn-warning btn-sm" onclick="updateWell({{ well.id }})"><i class="bi bi-arrow-counterclockwise"></i></button>
                                 </div>
-                                <!-- Delete well -->
-                                <form method="post" action="{% url 'crud_well' %}" class="list-group col-auto" id="button-delete-well-{{ well.id }}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="well_id" value="{{ well.id }}">
-                                    <input type="hidden" name="next" value="{{ request.path }}">
-                                    <button type="submit" class="btn btn-danger btn-sm" name="delete_well"><i class="bi bi-trash"></i></button>
-                                </form>
                             {% endif %}
                         {% endif %}
                     </div>
@@ -135,7 +133,7 @@
                         <div class="col-auto ps-0">
                             <input type="hidden" name="project_id" value="{{ project.id }}">
                             <input type="hidden" name="next" value="{{ request.path }}">
-                            <button type="submit" class="btn btn-outline-secondary btn-sm" name="create_well">Create well</button>
+                            <button type="submit" class="btn btn-outline-secondary btn-sm" name="create_well">Add well</button>
                         </div>
                     </form>
                 {% endif %}
@@ -169,6 +167,13 @@
                                         </div>
                                     </form>
                                 </div>
+                                <!-- Delete lookahead -->
+                                <form method="post" action="{% url 'crud_lookahead' %}" class="list-group col-auto" id="delete-button-lookahead-{{ lookahead.id }}" hidden="true">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="lookahead_id" value="{{ lookahead.id }}">
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button type="submit" class="btn btn-danger btn-sm" name="delete_lookahead"><i class="bi bi-trash"></i></button>
+                                </form>
                                 <!-- Toggle button to show/hide input field to update lookahead name -->
                                 <div class="list-group col-auto" id="button-toggle-update-lookahead-{{ lookahead.id }}">
                                     <button type="button" class="btn btn-warning btn-sm" onclick="updateLookahead({{ lookahead.id }})"><i class="bi bi-pen"></i></button>
@@ -176,13 +181,6 @@
                                 <div class="list-group col-auto" id="undo-button-toggle-update-lookahead-{{ lookahead.id }}" hidden="true">
                                     <button type="button" class="btn btn-warning btn-sm" onclick="updateLookahead({{ lookahead.id }})"><i class="bi bi-arrow-counterclockwise"></i></button>
                                 </div>
-                                <!-- Delete lookahead -->
-                                <form method="post" action="{% url 'crud_lookahead' %}" class="list-group col-auto" id="button-delete-lookahead-{{ lookahead.id }}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="lookahead_id" value="{{ lookahead.id }}">
-                                    <input type="hidden" name="next" value="{{ request.path }}">
-                                    <button type="submit" class="btn btn-danger btn-sm" name="delete_lookahead"><i class="bi bi-trash"></i></button>
-                                </form>
                             {% endif %}
                         {% endif %}
                     </div>
@@ -197,7 +195,7 @@
                         <div class="col-auto ps-0">
                             <input type="hidden" name="project_id" value="{{ project.id }}">
                             <input type="hidden" name="next" value="{{ request.path }}">
-                            <button type="submit" class="btn btn-outline-secondary btn-sm" name="create_lookahead">Create lookahead</button>
+                            <button type="submit" class="btn btn-outline-secondary btn-sm" name="create_lookahead">Add lookahead</button>
                         </div>
                     </form>
                 {% endif %}
@@ -212,13 +210,14 @@
                         <div class="col-auto ps-0">
                             <input type="hidden" name="project_id" value="{{ project.id }}">
                             <input type="hidden" name="next" value="{{ request.path }}">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" name="create_cost_model">Create cost tracker</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" name="create_cost_model">Add cost tracker</button>
                         </div>
                     </form>
                 {% endif %}
             </div>
         </div>
     </div>
+    <hr>
 {% endfor %}
 
 {% endblock %}

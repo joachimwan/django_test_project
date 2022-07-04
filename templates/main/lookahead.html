@@ -5,47 +5,96 @@
 {% block title %}Lookahead{% endblock %}
 
 {% block content %}
-<!--<h1>This is Lookahead page.</h1>-->
-<!--<p>Welcome, {{ user.username|default:"Guest" }}!</p>-->
 
-{% if projects %}
-    <h3>Projects:</h3>
-    {% for project in projects %}
-        <hr>
-        <div class="container row">
-            <div class="list-group col-9">
-                <a href="#" class="list-group-item list-group-item-primary list-group-item-action">{{ project.name }}</a>
-            </div>
-            <!-- Delete project -->
-            <div class="col-auto">
-                {% if user == project.created_by %}
-                    <form method="post" action="{% url 'crud_project' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="project_id" value="{{ project.id }}">
-                        <input type="hidden" name="next" value="{{ request.path }}">
-                        <button type="submit" class="btn btn-danger" name="delete_project"><i class="bi bi-trash"></i></button>
-                    </form>
-                {% endif %}
+<h3>Wells Projects:</h3>
+
+{% for project in projects %}
+    <hr>
+    <div class="container-fluid">
+        <div class="row my-2 align-items-center">
+            <!-- Project name -->
+            <div class="col list-group" id="div-project-name-{{ project.id }}">
+                <a href="#" class="list-group-item list-group-item-primary list-group-item-action opacity-75">
+                    <strong>PROJECT - {{ project.name }}</strong>
+                </a>
             </div>
         </div>
-        {% for item in sequence %}
-            {% if item.phase.well.project == project %}
-                <div class="container row">
-                    <div class="col-2"><a>{{ item.phase.well }}</a></div>
-                    <div class="col-4"><a>{{ item.phase.name }}</a></div>
-                    <div class="col">
-                        <div class="container">
-                            {% for step in steps %}
-                                {% if step.phase == item.phase %}
-                                    <div class="row"><a>{{ step.ops_step }}</a></div>
-                                {% endif %}
-                            {% endfor %}
+
+        {% for lookahead in project.lookaheads.all %}
+<!--            <div>Lookahead: {{ lookahead }}</div>-->
+            {% for sequence in lookahead.sequence.all %}
+<!--                <div>Sequence: {{ sequence.order }} - {{ sequence.phase.well.name }} - {{ sequence.phase.name }}</div>-->
+                {% for step in sequence.phase.ops_steps.all %}
+<!--                    <div>Step: {{ step.order }} - {{ step.ops_step }}</div>-->
+                    <div class="row my-2 align-items-center">
+                        <div class="col list-group">
+                            <a class="list-group-item list-group-item-info">
+                                <strong>{{ lookahead.name }}</strong>
+                            </a>
+                        </div>
+                        <div class="col list-group">
+                            <a class="list-group-item list-group-item-info">
+                                <strong>Phase - {{ sequence.order }}</strong>
+                            </a>
+                        </div>
+                        <div class="col list-group">
+                            <a class="list-group-item list-group-item-info">
+                                <strong>{{ sequence.phase.well.name }}</strong>
+                            </a>
+                        </div>
+                        <div class="col list-group">
+                            <a class="list-group-item list-group-item-info">
+                                <strong>{{ sequence.phase.name }}</strong>
+                            </a>
+                        </div>
+                        <div class="col list-group">
+                            <a class="list-group-item list-group-item-info">
+                                <strong>Step - {{ step.order }}</strong>
+                            </a>
+                        </div>
+                        <div class="col list-group">
+                            <a class="list-group-item list-group-item-info">
+                                <strong>{{ step.ops_step }}</strong>
+                            </a>
                         </div>
                     </div>
-                </div>
-            {% endif %}
+                {% empty %}
+                    <div class="row my-2 align-items-center">
+                        <div class="col list-group">
+                            <a class="list-group-item list-group-item-info">
+                                <strong>{{ lookahead.name }}</strong>
+                            </a>
+                        </div>
+                        <div class="col list-group">
+                            <a class="list-group-item list-group-item-info">
+                                <strong>Phase - {{ sequence.order }}</strong>
+                            </a>
+                        </div>
+                        <div class="col list-group">
+                            <a class="list-group-item list-group-item-info">
+                                <strong>{{ sequence.phase.well.name }}</strong>
+                            </a>
+                        </div>
+                        <div class="col list-group">
+                            <a class="list-group-item list-group-item-info">
+                                <strong>{{ sequence.phase.name }}</strong>
+                            </a>
+                        </div>
+                        <div class="col list-group">
+                            <a class="list-group-item list-group-item-info">
+                                <strong>.</strong>
+                            </a>
+                        </div>
+                        <div class="col list-group">
+                            <a class="list-group-item list-group-item-info">
+                                <strong>.</strong>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
-{% endif %}
+    </div>
+{% endfor %}
 
 {% endblock %}

@@ -18,9 +18,12 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('well/', views.well, name='well'),
     path('lookahead/', views.lookahead, name='lookahead'),
     path('test/', views.test, name='test'),
     path('crud_project/', views.crud_project, name='crud_project'),
     path('crud_well/', views.crud_well, name='crud_well'),
+    path('crud_phase/', views.crud_phase, name='crud_phase'),
+    path('crud_step/', views.crud_step, name='crud_step'),
     path('crud_lookahead/', views.crud_lookahead, name='crud_lookahead'),
 ]

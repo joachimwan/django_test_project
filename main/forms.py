@@ -12,7 +12,7 @@ class ProjectForm(ModelForm):
         widgets = {
             'name': TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'e.g. GK Phase 3'
+                'placeholder': 'Project name'
             }),
         }
 
@@ -24,7 +24,7 @@ class WellForm(ModelForm):
         widgets = {
             'name': TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'e.g. Miri-1'
+                'placeholder': 'Well name'
             }),
         }
 
@@ -32,13 +32,25 @@ class WellForm(ModelForm):
 class PhaseForm(ModelForm):
     class Meta:
         model = Phase
-        fields = ['name', 'well', ]
+        fields = ['name', ]
+        widgets = {
+            'name': TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Phase'
+            }),
+        }
 
 
 class StepForm(ModelForm):
     class Meta:
         model = Step
-        fields = ['ops_step', 'phase', ]
+        fields = ['ops_step', ]
+        widgets = {
+            'ops_step': TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Step description'
+            }),
+        }
 
 
 class LookaheadForm(ModelForm):
