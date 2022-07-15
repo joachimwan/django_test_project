@@ -8,6 +8,7 @@
 
 {% block script %}
 <script src="{% static 'main/js/index.js' %}"></script>
+<script src="{% static 'main/js/sorting.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -33,9 +34,9 @@
                     </a>
                 </div>
             </div>
-            <div class="sortable">
+            <div class="sortable" id="sortable-phase-list-{{ well.id }}">
                 {% for phase in well.phases.all %}
-                    <div class="row">
+                    <div class="row" id="div-phase-{{ phase.id }}">
                         <!-- Left column -->
                         <div class="col-lg-6">
                             <div class="row my-2 align-items-center">
@@ -85,9 +86,9 @@
 
                         <!-- Right column: Ops step -->
                         <div class="col-lg-6">
-                            <div class="row sortable">
+                            <div class="row sortable" id="sortable-steps-list-{{ phase.id }}">
                                 {% for step in phase.ops_steps.all %}
-                                    <div class="row my-2 align-items-center">
+                                    <div class="row my-2 align-items-center" id="div-step-{{ step.id }}">
                                         <i class="col-auto bi bi-arrow-down-up handle"></i>
                                         <div class="col list-group" id="div-step-name-{{ step.id }}">
                                             <a href="#" class="list-group-item list-group-item-light list-group-item-action opacity-75">
@@ -134,17 +135,29 @@
 
                             <!-- Create step -->
                             {% if user == well.created_by %}
-                                <form method="post" action="{% url 'crud_step' %}" class="row my-2 align-items-center">
-                                    <div class="col-4">
-                                        {% csrf_token %}
-                                        {{ step_form.ops_step }}
-                                    </div>
-                                    <div class="col-auto ps-0">
-                                        <input type="hidden" name="phase_id" value="{{ phase.id }}">
-                                        <input type="hidden" name="next" value="{{ request.path }}">
-                                        <button type="submit" class="btn btn-outline-secondary btn-sm" name="create_step">Add step</button>
-                                    </div>
-                                </form>
+                            <form method="post" action="{% url 'crud_step' %}" class="row my-2 align-items-center">
+                                <div class="col-6">
+                                    {% csrf_token %}
+                                    {{ step_form.ops_step }}
+                                </div>
+                                <div class="col-auto ps-0">
+                                    <input type="hidden" name="phase_id" value="{{ phase.id }}">
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm" name="create_step">Add step</button>
+                                </div>
+                                <div class="col-auto ps-0">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateStepOrder({{ phase.id }})">Update order</button>
+                                </div>
+                            </form>
+                            <form method="post" action="{% url 'crud_phase' %}" id="form-update-step-order-{{ phase.id }}">
+                                {% csrf_token %}
+                                <input type="hidden" name="update_step_order">
+                                <input type="hidden" name="phase_id" value="{{ phase.id }}">
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                {% for step in phase.ops_steps.all %}
+                                    <input type="hidden" name="{{ step.id }}" value="0" id="order-step-{{ step.id }}">
+                                {% endfor %}
+                            </form>
                             {% endif %}
                         </div>
                     </div>
@@ -153,7 +166,7 @@
 
             <!-- Create phase -->
             {% if user == well.created_by %}
-                <form method="post" action="{% url 'crud_phase' %}" class="row my-2 align-items-center">
+                <form method="post" action="{% url 'crud_phase' %}" class="row align-items-center">
                     <div class="col-4">
                         {% csrf_token %}
                         {{ phase_form.name }}
@@ -163,6 +176,18 @@
                         <input type="hidden" name="next" value="{{ request.path }}">
                         <button type="submit" class="btn btn-outline-secondary btn-sm" name="create_phase">Add phase</button>
                     </div>
+                    <div class="col-auto ps-0">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updatePhaseOrder({{ well.id }})">Update order</button>
+                    </div>
+                </form>
+                <form method="post" action="{% url 'crud_well' %}" id="form-update-phase-order-{{ well.id }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="update_phase_order">
+                    <input type="hidden" name="well_id" value="{{ well.id }}">
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    {% for phase in well.phases.all %}
+                        <input type="hidden" name="{{ phase.id }}" value="0" id="order-phase-{{ phase.id }}">
+                    {% endfor %}
                 </form>
             {% endif %}
 
@@ -194,7 +219,6 @@
 
     .handle {
     	cursor: move;
-<!--    	cursor: -webkit-grabbing;-->
     }
 </style>
 

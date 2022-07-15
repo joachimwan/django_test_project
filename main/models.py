@@ -35,6 +35,7 @@ class Phase(models.Model):
 
     class Meta:
         ordering = ['well', 'order']
+        constraints = [models.UniqueConstraint(fields=['well', 'name'], name='unique_phase')]
 
 
 class Step(models.Model):

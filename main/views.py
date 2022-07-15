@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Max
 from django.forms import modelformset_factory
 from .forms import *
 
@@ -46,6 +47,14 @@ def lookahead(request):
 
 def test(request):
     context = {}
+
+    well_x = Well.objects.all().first()
+    test_x = Phase.objects.filter(well=well_x)
+    value_x = test_x.aggregate(Max('order'))["order__max"]
+    # value_y = value_x["order__max"] + 1
+    messages.success(request, f'test test {value_x} test test')
+
+    # formset tests
     ProjectFormSet = modelformset_factory(Project, ProjectForm, extra=3)
     if request.method == 'POST':
         formset = ProjectFormSet(request.POST, queryset=Project.objects.filter(created_by=request.user))
@@ -61,6 +70,7 @@ def test(request):
     else:
         formset = ProjectFormSet(queryset=Project.objects.filter(created_by=request.user))
     context['formset'] = formset
+
     return render(request, 'main/test.html', context)
 
 
@@ -140,6 +150,17 @@ def crud_well(request):
                 messages.error(request, f'Unable to update {well.name} well.')
             return HttpResponseRedirect(n)
 
+    if request.method == 'POST' and "update_phase_order" in request.POST:
+        well_id = request.POST.get("well_id")
+        n = request.POST.get('next')
+        well = Well.objects.get(pk=well_id)
+        if well.created_by == request.user:
+            for phase in well.phases.all():
+                phase.order = request.POST.get(str(phase.id))
+                phase.save()
+            messages.success(request, f'{well.name} phase orders successfully updated.')
+            return HttpResponseRedirect(n)
+
 
 @login_required
 def crud_phase(request):
@@ -151,7 +172,8 @@ def crud_phase(request):
             well_id = request.POST.get("well_id")
             well = Well.objects.get(pk=well_id)
             phase.well = well
-            phase.order = 0  # CHANGE THIS NEXT TIME!!!!!!!!!!!!!!!!!!!!!
+            order_max = Phase.objects.filter(well=well).aggregate(Max('order'))["order__max"]
+            phase.order = order_max + 1
             phase.save()
             messages.success(request, f'{phase_form["name"].value()} phase successfully created.')
         else:
@@ -180,6 +202,17 @@ def crud_phase(request):
                 messages.error(request, f'Unable to update {phase.name} phase.')
             return HttpResponseRedirect(n)
 
+    if request.method == 'POST' and "update_step_order" in request.POST:
+        phase_id = request.POST.get("phase_id")
+        n = request.POST.get('next')
+        phase = Phase.objects.get(pk=phase_id)
+        if phase.well.created_by == request.user:
+            for step in phase.ops_steps.all():
+                step.order = request.POST.get(str(step.id))
+                step.save()
+            messages.success(request, f'{phase.name} step orders successfully updated.')
+            return HttpResponseRedirect(n)
+
 
 @login_required
 def crud_step(request):
@@ -191,7 +224,8 @@ def crud_step(request):
             phase_id = request.POST.get("phase_id")
             phase = Phase.objects.get(pk=phase_id)
             step.phase = phase
-            step.order = 0  # CHANGE THIS NEXT TIME!!!!!!!!!!!!!!!!!!!!!
+            order_max = Step.objects.filter(phase=phase).aggregate(Max('order'))["order__max"]
+            step.order = order_max + 1
             step.save()
             messages.success(request, f'{step_form["ops_step"].value()} step successfully created.')
         else:
