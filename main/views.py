@@ -173,7 +173,10 @@ def crud_phase(request):
             well = Well.objects.get(pk=well_id)
             phase.well = well
             order_max = Phase.objects.filter(well=well).aggregate(Max('order'))["order__max"]
-            phase.order = order_max + 1
+            try:
+                phase.order = order_max + 1
+            except TypeError:
+                phase.order = 1
             phase.save()
             messages.success(request, f'{phase_form["name"].value()} phase successfully created.')
         else:
@@ -225,7 +228,10 @@ def crud_step(request):
             phase = Phase.objects.get(pk=phase_id)
             step.phase = phase
             order_max = Step.objects.filter(phase=phase).aggregate(Max('order'))["order__max"]
-            step.order = order_max + 1
+            try:
+                step.order = order_max + 1
+            except TypeError:
+                step.order = 1
             step.save()
             messages.success(request, f'{step_form["ops_step"].value()} step successfully created.')
         else:
