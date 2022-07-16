@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_control
 from django.contrib import messages
 from django.db.models import Max
 from django.forms import modelformset_factory
@@ -28,6 +29,7 @@ def index(request):
 
 
 @login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def well(request):
     context = {
         'projects': Project.objects.all(),
@@ -45,13 +47,13 @@ def lookahead(request):
     return render(request, 'main/lookahead.html', context)
 
 
+@login_required
 def test(request):
     context = {}
 
     well_x = Well.objects.all().first()
     test_x = Phase.objects.filter(well=well_x)
     value_x = test_x.aggregate(Max('order'))["order__max"]
-    # value_y = value_x["order__max"] + 1
     messages.success(request, f'test test {value_x} test test')
 
     # formset tests
