@@ -60,10 +60,11 @@
     {% for form in formset %}
         <div class="my-2">
             {{ form.name }}
+            {{ form.id }}
         </div>
     {% endfor %}
 <!--        {{ formset }}-->
-    <button type="submit">Update</button>
+    <button type="submit" name="test_formset">Update</button>
 </form>
 
 <h3>Sortable tests:</h3>
@@ -100,15 +101,18 @@
 <button onclick="testfunc()">Update order</button>
 <div id="demo"></div>
 
-<!--<script>-->
-<!--new Sortable(sortablelist, {-->
-<!--    multiDrag: true,-->
-<!--    selectedClass: 'sortable-selected',-->
-<!--    fallbackTolerance: 3,-->
-<!--    animation: 150,-->
-<!--    ghostClass: 'sortable-ghost',-->
-<!--});-->
-<!--</script>-->
+<h3>Excel upload tests:</h3>
+<form method="post" class="list-group" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="excel_file">
+    <button type="submit" name="test_excel">Update</button>
+</form>
+{% for row in data %}
+    {% for cell in row %}
+        {{ cell }}&nbsp;&nbsp;
+    {% endfor %}
+    <br>
+{% endfor %}
 
 <script>
     let sortables = document.getElementsByClassName("sortable");
@@ -129,5 +133,8 @@
         border: solid red 1px;
     }
 </style>
+
+<br>
+<br>
 
 {% endblock %}

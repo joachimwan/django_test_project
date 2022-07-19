@@ -6,6 +6,8 @@ from django.contrib import messages
 from django.db.models import Max
 from django.forms import modelformset_factory
 from .forms import *
+import openpyxl
+import pandas as pd
 
 # Create your views here.
 
@@ -58,7 +60,7 @@ def test(request):
 
     # formset tests
     ProjectFormSet = modelformset_factory(Project, ProjectForm, extra=3)
-    if request.method == 'POST':
+    if request.method == 'POST' and "test_formset" in request.POST:
         formset = ProjectFormSet(request.POST, queryset=Project.objects.filter(created_by=request.user))
         if formset.is_valid():
             for form in formset:
@@ -72,6 +74,23 @@ def test(request):
     else:
         formset = ProjectFormSet(queryset=Project.objects.filter(created_by=request.user))
     context['formset'] = formset
+
+    # upload tests
+    context['data'] = "nothing is here"
+    if request.method == 'POST' and "test_excel" in request.POST:
+        excel_file = request.FILES["excel_file"]
+        wb = openpyxl.load_workbook(excel_file)
+        worksheet = wb["Wells"]
+        data = list()
+        for row in worksheet.iter_rows():
+            row_data = list()
+            for cell in row:
+                row_data.append(str(cell.value))
+            data.append(row_data)
+        context['data'] = data
+        xls = pd.ExcelFile(excel_file)
+        df = pd.read_excel(xls, 'Wells')
+        print(df)
 
     return render(request, 'main/test.html', context)
 
